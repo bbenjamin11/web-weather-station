@@ -1,0 +1,18 @@
+doctype html
+html(lang='fr-FR')
+  head
+    meta(charset='UTF-8')
+    script(type='text/javascript' src='https://code.jquery.com/jquery-3.2.1.js') 
+    script(type='text/javascript' src='scripts/Map.js')
+    script(async, defer, src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBfBC_k6_sDuxEkGREL-pPDD2kb-wtGA4I') 
+    link(rel='stylesheet', href='style/style.css')
+  body(data-affix='85', data-top='0', onload='onLoad(#{JSON.stringify(data)})')
+    div#map
+    div.panel
+      p#stationName Name Station
+      div#closeButton.button
+        div#closeIcon
+      p#humidityLive 0%
+      p#temperatureLive 0°
+      p#pressionLive 000Pa
+      p#snowLive 0m
