@@ -12,6 +12,11 @@ function onLoad(data){
   });
 
   loadStations(data.stations);
+
+  /*- - - - - WebSocket - - - - -*/
+  ws = new WebSocket('ws://localhost:3000/');
+  ws.onopen = function(evt) { onOpen(evt); };
+  ws.onmessage = function(evt) { onMessage(evt); };
 }
 
 function loadStations(stations){
@@ -32,6 +37,7 @@ function loadStations(stations){
       $panel.css({
         left: 0
       });
+      ws.send(JSON.stringify({type: "getStationInfo",station: stationName}));
     }
   }
 
@@ -45,4 +51,12 @@ function loadStations(stations){
       openPanel(station.name);
     });
   });
+}
+
+/**
+* Funtion executed when the WS is open
+*/
+function onOpen(evt){
+  console.log("WS CONNECTED");
+  connected = true;
 }
