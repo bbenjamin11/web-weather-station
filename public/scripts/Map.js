@@ -37,8 +37,8 @@ function loadStations(stations){
       $panel.css({
         left: 0
       });
-      ws.send(JSON.stringify({type: "getStationInfo",station: stationName}));
     }
+    ws.send(JSON.stringify({type: "getStationInfo",station: stationName}));
   }
 
   stations.forEach(function(station, index) {
@@ -59,4 +59,18 @@ function loadStations(stations){
 function onOpen(evt){
   console.log("WS CONNECTED");
   connected = true;
+}
+
+function onMessage(evt){
+  console.log("WS message");
+  console.log(evt);
+
+  var msg = JSON.parse(evt.data);
+  if(msg.type == "infoStation"){
+    console.log("-*-*-*-*-*-*-");
+    $("#temperatureLive").html(msg.data.temperature + "°C");
+    $("#humidityLive").html(msg.data.hygrometry + "%");
+    $("#pressionLive").html(msg.data.pressure + "Pa");
+    $("#snowLive").html(msg.data.snow + "m");
+  }
 }

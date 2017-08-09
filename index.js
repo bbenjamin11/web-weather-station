@@ -36,6 +36,20 @@ app.ws('/', function(ws, req) {
   console.log("web socket up");
   ws.on('message', function(msg) {
     console.log(msg);
+    var msg = JSON.parse(msg);
+
+    if(msg.type == "getStationInfo"){
+      /* simulation data */
+      data =  {
+        "date": "2017-07-14T13:45:25",
+        "temperature": 31.4,
+        "pressure": 1000.3,
+        "hygrometry": 59,
+        "snow": 0
+      }
+      /* send info at client page */
+      ws.send(JSON.stringify({type:"infoStation", data:data}));
+    }
   });
   //console.log('socket', req.testing);
 });
