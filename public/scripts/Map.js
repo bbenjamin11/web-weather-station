@@ -1,14 +1,36 @@
 function onLoad(data){
 
   var $panel = $(".panel");
+  var $chartPanel = $("#chartPanel");
+  var $chartButton = $("#chartButton");
   var $panelWidth = $panel.width();
+
+  $chartButton.hide();
 
   $( "#closeButton" ).click(function() {
     if($panel.offset().left == 0){
+      $chartButton.hide();
+      $chartPanel.css({
+        right: 0,
+      });
       $panel.css({
         left: -$panelWidth,
       });
     }
+  });
+
+  $( "#chartButton" ).click(function() {
+
+    if($chartPanel.offset().left != $panelWidth){
+      $chartPanel.css({
+        right: -$chartPanel.width(),
+      });
+    }else{
+      $chartPanel.css({
+        right: 0,
+      });
+    }
+
   });
 
   loadStations(data.stations);
@@ -33,6 +55,8 @@ function loadStations(stations){
 
   function openPanel(stationName) {
     $( "#stationName" ).text(stationName);
+    var $chartButton = $("#chartButton");
+    $chartButton.show();
     if($panel.offset().left != 0){
       $panel.css({
         left: 0
