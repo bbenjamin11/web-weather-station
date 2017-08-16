@@ -33,6 +33,16 @@ function onLoad(data){
 
   });
 
+  $("#year").click(function(){
+    sendDataFilter("year");
+  });
+  $("#month").click(function(){
+    sendDataFilter("month");
+  });
+  $("#day").click(function(){
+    sendDataFilter("day");
+  });
+
   loadStations(data.stations);
 
   /*- - - - - WebSocket - - - - -*/
@@ -75,6 +85,10 @@ function loadStations(stations){
       openPanel(station.name);
     });
   });
+}
+
+function sendDataFilter(date){
+  ws.send(JSON.stringify({type: "setDateFilrer",data: date}));
 }
 
 /**

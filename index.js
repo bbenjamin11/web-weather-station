@@ -5,6 +5,8 @@ var expressWs = require('express-ws')(app);
 var fs = require('fs');
 
 var myStations = [];
+var myNameStation;
+var dateFilter = "day";
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -45,136 +47,29 @@ app.ws('/', function(ws, req) {
         console.log(msg);
         var msg = JSON.parse(msg);
 
-        if (msg.type == "getStationInfo") {
-            /* simulation data */
-            /*data = {
-                "date": my,
-                "temperature": 31.4,
-                "pressure": 1000.3,
-                "hygrometry": 59,
-                "snow": 0
-            }*/
-            live = getLiveData(myStations, msg.station);
-            list = getListData(myStations, msg.station,"month");
-            console.log(list);
-
-            var optLine1 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-            optLine1.scales.yAxes[0].scaleLabel.labelString = "°C";
-            optLine1.title.text = "Temperature";
-            var configT = {
-                type: 'line',
-                data: {
-                    labels: list[0],
-                    datasets: [{
-                        label: "min",
-                        backgroundColor: 'rgb(255, 0, 0)',
-                        borderColor: 'rgb(255, 0, 0)',
-                        data: list[1],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    },
-                    {
-                        label: "max",
-                        backgroundColor: 'rgb(255, 0, 0)',
-                        borderColor: 'rgb(255, 0, 0)',
-                        data: list[2],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    }
-                  ]
-                },
-                options: optLine1
-
-            };
-            var optLine2 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-            optLine2.scales.yAxes[0].scaleLabel.labelString = "%";
-            optLine2.title.text = "Hygrometry";
-            var configH = {
-                type: 'line',
-                data: {
-                    labels: list[0],
-                    datasets: [{
-                        label: "min",
-                        backgroundColor: 'rgb(0, 0, 255)',
-                        borderColor: 'rgb(0, 0, 255)',
-                        data: list[3],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    },{
-                        label: "max",
-                        backgroundColor: 'rgb(0, 0, 255)',
-                        borderColor: 'rgb(0, 0, 255)',
-                        data: list[4],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    }
-                  ]
-                },
-                options: optLine2
-
-            };
-            var optLine3 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-            optLine3.scales.yAxes[0].scaleLabel.labelString = "Pa";
-            optLine3.title.text = "Pressure";
-            var configP = {
-                type: 'line',
-                data: {
-                    labels: list[0],
-                    datasets: [{
-                        label: "min",
-                        backgroundColor: 'rgb(128, 0, 255)',
-                        borderColor: 'rgb(128, 0, 255)',
-                        data: list[5],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    },{
-                        label: "max",
-                        backgroundColor: 'rgb(128, 0, 255)',
-                        borderColor: 'rgb(128, 0, 255)',
-                        data: list[6],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    }]
-                },
-                options: optLine3
-
-            };
-            var optLine4 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-            optLine4.scales.yAxes[0].scaleLabel.labelString = "M";
-            optLine4.title.text = "Snow";
-            var configS = {
-                type: 'line',
-                data: {
-                    labels: list[0],
-                    datasets: [{
-                        label: "min",
-                        backgroundColor: 'rgb(0, 255, 0)',
-                        borderColor: 'rgb(0, 255, 0)',
-                        data: list[7],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    },{
-                        label: "max",
-                        backgroundColor: 'rgb(0, 255, 0)',
-                        borderColor: 'rgb(0, 255, 0)',
-                        data: list[7],
-                        fill: false,
-                        yAxisID: "y-axis-0",
-                    }
-                  ]
-                },
-                options: optLine4
-
-            };
-            /* send info at client page */
-            ws.send(JSON.stringify({
-                type: "infoStation",
-                data: live,
-                lineChartT: configT,
-                lineChartH: configH,
-                lineChartP: configP,
-                lineChartS: configS
-            }));
+        if (msg.type == "setDateFilrer") {
+          dateFilter = msg.data;
+          var [configT,configH,configP,configS] = createLineChart(myNameStation);
+          ws.send(JSON.stringify({
+              type: "setDateFilter",
+              lineChartT: configT,
+              lineChartH: configH,
+              lineChartP: configP,
+              lineChartS: configS
+          }));
+        }else if (msg.type == "getStationInfo") {
+          myNameStation = msg.station;
+          var live = getLiveData(myStations, myNameStation);
+          var [configT,configH,configP,configS] = createLineChart(myNameStation);
+          /* send info at client page */
+          ws.send(JSON.stringify({
+              type: "infoStation",
+              data: live,
+              lineChartT: configT,
+              lineChartH: configH,
+              lineChartP: configP,
+              lineChartS: configS
+          }));
         }
     });
     //console.log('socket', req.testing);
@@ -239,7 +134,7 @@ function getListData(stations, id, sort) {
         listDataS.push([]);
       }
     }
-    console.log(date);
+
     for (var i in stations) {
         s = stations[i];
         if (s.name == id) {
@@ -269,9 +164,7 @@ function getListData(stations, id, sort) {
                   listDataS[_m].push(myData.snow)
                 }
             }
-            console.log(listDataT.length);
             for(var k=0;k<listDataT.length;k++){
-              console.log(k);
               /*** min T ****/
               v = Math.min(...listDataT[k]);
               if(v == (Infinity))
@@ -363,4 +256,119 @@ function getLiveData(stations, id) {
         }
     }
     return null;
+}
+
+function createLineChart(name){
+  list = getListData(myStations, name,dateFilter);
+
+  var optLine1 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
+  optLine1.scales.yAxes[0].scaleLabel.labelString = "°C";
+  optLine1.title.text = "Temperature";
+  var configT = {
+      type: 'line',
+      data: {
+          labels: list[0],
+          datasets: [{
+              label: "min",
+              backgroundColor: 'rgb(255, 0, 0)',
+              borderColor: 'rgb(255, 0, 0)',
+              data: list[1],
+              fill: false,
+              yAxisID: "y-axis-0",
+          },
+          {
+              label: "max",
+              backgroundColor: 'rgb(255, 0, 0)',
+              borderColor: 'rgb(255, 0, 0)',
+              data: list[2],
+              fill: false,
+              yAxisID: "y-axis-0",
+          }
+        ]
+      },
+      options: optLine1
+
+  };
+  var optLine2 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
+  optLine2.scales.yAxes[0].scaleLabel.labelString = "%";
+  optLine2.title.text = "Hygrometry";
+  var configH = {
+      type: 'line',
+      data: {
+          labels: list[0],
+          datasets: [{
+              label: "min",
+              backgroundColor: 'rgb(0, 0, 255)',
+              borderColor: 'rgb(0, 0, 255)',
+              data: list[3],
+              fill: false,
+              yAxisID: "y-axis-0",
+          },{
+              label: "max",
+              backgroundColor: 'rgb(0, 0, 255)',
+              borderColor: 'rgb(0, 0, 255)',
+              data: list[4],
+              fill: false,
+              yAxisID: "y-axis-0",
+          }
+        ]
+      },
+      options: optLine2
+
+  };
+  var optLine3 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
+  optLine3.scales.yAxes[0].scaleLabel.labelString = "Pa";
+  optLine3.title.text = "Pressure";
+  var configP = {
+      type: 'line',
+      data: {
+          labels: list[0],
+          datasets: [{
+              label: "min",
+              backgroundColor: 'rgb(128, 0, 255)',
+              borderColor: 'rgb(128, 0, 255)',
+              data: list[5],
+              fill: false,
+              yAxisID: "y-axis-0",
+          },{
+              label: "max",
+              backgroundColor: 'rgb(128, 0, 255)',
+              borderColor: 'rgb(128, 0, 255)',
+              data: list[6],
+              fill: false,
+              yAxisID: "y-axis-0",
+          }]
+      },
+      options: optLine3
+
+  };
+  var optLine4 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
+  optLine4.scales.yAxes[0].scaleLabel.labelString = "M";
+  optLine4.title.text = "Snow";
+  var configS = {
+      type: 'line',
+      data: {
+          labels: list[0],
+          datasets: [{
+              label: "min",
+              backgroundColor: 'rgb(0, 255, 0)',
+              borderColor: 'rgb(0, 255, 0)',
+              data: list[7],
+              fill: false,
+              yAxisID: "y-axis-0",
+          },{
+              label: "max",
+              backgroundColor: 'rgb(0, 255, 0)',
+              borderColor: 'rgb(0, 255, 0)',
+              data: list[8],
+              fill: false,
+              yAxisID: "y-axis-0",
+          }
+        ]
+      },
+      options: optLine4
+
+  };
+
+  return [configT,configH,configP,configS];
 }
