@@ -1,7 +1,7 @@
 {
    "responsive":true,
    "title":{
-      "display":false,
+      "display":true,
       "text":"Line Chart"
    },
    "tooltips":{

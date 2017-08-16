@@ -48,7 +48,7 @@ function loadStations(stations){
 
   var uluru = {lat: 43.5668035, lng: 1.3783154};
   var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 4,
+    zoom: 10,
     center: uluru,
     mapTypeId: 'satellite'
   });
@@ -98,6 +98,13 @@ function onMessage(evt){
     $("#snowLive").html(msg.data.snow + "m");
   }
   /*- - - - - Chart - - - - -*/
+
+  try {
+    window.myLine1.destroy();
+    window.myLine2.destroy();
+    window.myLine3.destroy();
+    window.myLine4.destroy();
+  } catch (e) {}
   var ctx1 = document.getElementById("lineChartT").getContext("2d");
   window.myLine1 = new Chart(ctx1, msg.lineChartT);
   var ctx2 = document.getElementById("lineChartH").getContext("2d");
