@@ -5,6 +5,8 @@ html(lang='fr-FR')
     script(type='text/javascript' src='https://code.jquery.com/jquery-3.2.1.js')
     script(type='text/javascript' src='scripts/Map.js')
     script(async, defer, src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBfBC_k6_sDuxEkGREL-pPDD2kb-wtGA4I')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js')
     link(rel='stylesheet', href='style/style.css')
   body(data-affix='85', data-top='0', onload='onLoad(#{JSON.stringify(data)})')
     div#map
@@ -20,3 +22,15 @@ html(lang='fr-FR')
         p#snowLive 0m
       div#chartPanel
         div#chartButton.button
+        div#selectDate
+        table#lines
+          tr
+            td
+              canvas#lineChartT.linesCanvas
+            td
+              canvas#lineChartH.linesCanvas
+          tr
+            td
+              canvas#lineChartP.linesCanvas
+            td
+              canvas#lineChartS.linesCanvas

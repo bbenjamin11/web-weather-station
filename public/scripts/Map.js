@@ -97,4 +97,13 @@ function onMessage(evt){
     $("#pressionLive").html(msg.data.pressure + "Pa");
     $("#snowLive").html(msg.data.snow + "m");
   }
+  /*- - - - - Chart - - - - -*/
+  var ctx1 = document.getElementById("lineChartT").getContext("2d");
+  window.myLine1 = new Chart(ctx1, msg.lineChartT);
+  var ctx2 = document.getElementById("lineChartH").getContext("2d");
+  window.myLine2 = new Chart(ctx2, msg.lineChartH);
+  var ctx3 = document.getElementById("lineChartP").getContext("2d");
+  window.myLine3 = new Chart(ctx3, msg.lineChartP);
+  var ctx4 = document.getElementById("lineChartS").getContext("2d");
+  window.myLine4 = new Chart(ctx4, msg.lineChartS);
 }
