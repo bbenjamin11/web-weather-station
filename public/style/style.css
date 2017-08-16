@@ -125,9 +125,35 @@ body, html {
 /*
 * Line chart
 */
-#lines {
+
+
+
+table#menu {
+    /*border-collapse: collapse;*/
+
+
+    width: 50%;
+    margin: auto;
+    margin-bottom: 50px;
+    margin-top: 50px;
+  	text-align: center;
+  	table-layout: auto;
 }
-table{
+
+td.mymenu {
+  width: 33%;
+  text-align: center;
+  border: 2px solid blue;
+  border-radius: 10px;
+  /*border-bottom: 1px solid #ddd;*/
+}
+
+td.mymenu:hover{
+  background-color:rgba(0, 0, 200, 0.2)
+}
+
+
+table#lines{
 	width: 100%;
 }
 td{
