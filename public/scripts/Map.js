@@ -1,5 +1,5 @@
 function onLoad(data){
-
+  console.log("onload");
   var $panel = $(".panel");
   var $chartPanel = $("#chartPanel");
   var $chartButton = $("#chartButton");
@@ -32,7 +32,7 @@ function onLoad(data){
     }
 
   });
-
+  /***  Clik filter selection   ***/
   $("#year").click(function(){
     sendDataFilter("year");
   });
@@ -41,6 +41,41 @@ function onLoad(data){
   });
   $("#day").click(function(){
     sendDataFilter("day");
+  });
+
+
+  /***  Clik data line chart   ***/
+  $("#imgtemp").click(function(){
+    $("#imgtemp").attr("src","/image/temperature_actif.png");
+    $("#imghygr").attr("src","/image/hydraulic_passif.png");
+    $("#imgpres").attr("src","/image/pression_passif.png");
+    $("#imgsnow").attr("src","/image/Snow_level_passif.png");
+
+    sendDataLineChart("temp");
+  });
+  $("#imghygr").click(function(){
+    $("#imgtemp").attr("src","/image/temperature_passif.png");
+    $("#imghygr").attr("src","/image/hydraulic_actif.png");
+    $("#imgpres").attr("src","/image/pression_passif.png");
+    $("#imgsnow").attr("src","/image/Snow_level_passif.png");
+
+    sendDataLineChart("hygr");
+  });
+  $("#imgpres").click(function(){
+    $("#imgtemp").attr("src","/image/temperature_passif.png");
+    $("#imghygr").attr("src","/image/hydraulic_passif.png");
+    $("#imgpres").attr("src","/image/pression_actif.png");
+    $("#imgsnow").attr("src","/image/Snow_level_passif.png");
+
+    sendDataLineChart("pres");
+  });
+  $("#imgsnow").click(function(){
+    $("#imgtemp").attr("src","/image/temperature_passif.png");
+    $("#imghygr").attr("src","/image/hydraulic_passif.png");
+    $("#imgpres").attr("src","/image/pression_passif.png");
+    $("#imgsnow").attr("src","/image/Snow_level_actif.png");
+
+    sendDataLineChart("snow");
   });
 
   loadStations(data.stations);
@@ -60,7 +95,7 @@ function loadStations(stations){
   var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 10,
     center: uluru,
-    mapTypeId: 'satellite'
+    mapTypeId: 'terrain'
   });
 
   function openPanel(stationName) {
@@ -91,6 +126,10 @@ function sendDataFilter(date){
   ws.send(JSON.stringify({type: "setDateFilrer",data: date}));
 }
 
+function sendDataLineChart(val){
+  ws.send(JSON.stringify({type: "setDataLineChart",data: val}));
+}
+
 /**
 * Funtion executed when the WS is open
 */
@@ -106,25 +145,24 @@ function onMessage(evt){
   var msg = JSON.parse(evt.data);
   if(msg.type == "infoStation"){
     console.log("-*-*-*-*-*-*-");
-    $("#temperatureLive").html(msg.data.temperature + "°C");
-    $("#humidityLive").html(msg.data.hygrometry + "%");
-    $("#pressionLive").html(msg.data.pressure + "Pa");
+    $("#tempLive").html(msg.data.temperature + "°C");
+    $("#hygrLive").html(msg.data.hygrometry + "%");
+    $("#presLive").html(msg.data.pressure + "Pa");
     $("#snowLive").html(msg.data.snow + "m");
+    if(msg.data.type == "station"){
+      $("#staionImg").attr("src","/image/station_icone.png");
+    } else {
+      $("#staionImg").attr("src","/image/refuge_station_icone.png");
+    }
+  }else if(msg.type == "infoLineChart"){
+    /*- - - - - Chart - - - - -*/
+    try {
+      window.myLine.destroy();
+    } catch (e) {}
+    console.log(JSON.stringify(msg.lineChartT));
+    console.log("----------------------********---------------------");
+    var ctx1 = document.getElementById("lineChartT").getContext("2d");
+    window.myLine = new Chart(ctx1, msg.lineChartT);
   }
-  /*- - - - - Chart - - - - -*/
 
-  try {
-    window.myLine1.destroy();
-    window.myLine2.destroy();
-    window.myLine3.destroy();
-    window.myLine4.destroy();
-  } catch (e) {}
-  var ctx1 = document.getElementById("lineChartT").getContext("2d");
-  window.myLine1 = new Chart(ctx1, msg.lineChartT);
-  var ctx2 = document.getElementById("lineChartH").getContext("2d");
-  window.myLine2 = new Chart(ctx2, msg.lineChartH);
-  var ctx3 = document.getElementById("lineChartP").getContext("2d");
-  window.myLine3 = new Chart(ctx3, msg.lineChartP);
-  var ctx4 = document.getElementById("lineChartS").getContext("2d");
-  window.myLine4 = new Chart(ctx4, msg.lineChartS);
 }

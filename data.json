@@ -1,6 +1,7 @@
 [
    {
       "name":"Capgemini 1",
+      "type":"station",
       "position":{
          "lat":43.5668035,
          "lng":1.3783154
@@ -397,11 +398,54 @@
             "pressure":1000.3,
             "hygrometry":30,
             "snow":0
+         },
+         {
+            "date":"2017-08-20T12.00.00",
+            "temperature":28,
+            "pressure":1000.2,
+            "hygrometry":30,
+            "snow":0
+         },
+         {
+            "date":"2017-08-20T13.00.00",
+            "temperature":29,
+            "pressure":1000.3,
+            "hygrometry":30,
+            "snow":0
+         },
+         {
+            "date":"2017-08-20T14.00.00",
+            "temperature":30,
+            "pressure":1000.3,
+            "hygrometry":30,
+            "snow":0
+         },
+         {
+            "date":"2017-08-21T12.00.00",
+            "temperature":28,
+            "pressure":1000.2,
+            "hygrometry":30,
+            "snow":0
+         },
+         {
+            "date":"2017-08-21T13.00.00",
+            "temperature":29,
+            "pressure":1000.3,
+            "hygrometry":30,
+            "snow":0
+         },
+         {
+            "date":"2017-08-21T14.00.00",
+            "temperature":30,
+            "pressure":1000.3,
+            "hygrometry":30,
+            "snow":0
          }
       ]
    },
    {
       "name":"Capgemini 3",
+      "type":"refuge",
       "position":{
          "lat":43.6668035,
          "lng":1.3783154

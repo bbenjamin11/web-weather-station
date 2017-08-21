@@ -9,17 +9,35 @@ html(lang='fr-FR')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js')
     link(rel='stylesheet', href='style/style.css')
   body(data-affix='85', data-top='0', onload='onLoad(#{JSON.stringify(data)})')
+    div#head
+      img#logo(src="/image/Logo_header.png" alt="Image Title")
     div#map
     div.panel
       div#live
         div#divStationName
+          img#staionImg(src="/image/refuge_station_icone.png")
           p#stationName Name Station
         div#closeButton.button
           div#closeIcon
-        p#humidityLive 0%
-        p#temperatureLive 0°
-        p#pressionLive 000Pa
-        p#snowLive 0m
+        table#icon
+          tr
+            td
+              div.divLive
+                img#imgtemp.classicon(src="/image/temperature_passif.png" alt="Image Title")
+                p#tempLive.textLive 0°
+            td
+              div.divLive
+                img#imghygr.classicon(src="/image/hydraulic_passif.png" alt="Image Title")
+                p#hygrLive.textLive 0%
+          tr
+            td
+              div#divLivePres.divLive
+                img#imgpres.classicon(src="/image/pression_passif.png" alt="Image Title")
+                p#presLive.textLive 000Pa
+            td
+              div#divLiveSnow.divLive
+                img#imgsnow.classicon(src="/image/Snow_level_passif.png" alt="Image Title")
+                p#snowLive.textLive 0m
       div#chartPanel
         div#chartButton.button
         div#selectDate
@@ -28,14 +46,5 @@ html(lang='fr-FR')
             td#year.mymenu This Year
             td#month.mymenu This Month
             td#day.mymenu This Day
-        table#lines
-          tr
-            td
-              canvas#lineChartT.linesCanvas
-            td
-              canvas#lineChartH.linesCanvas
-          tr
-            td
-              canvas#lineChartP.linesCanvas
-            td
-              canvas#lineChartS.linesCanvas
+        div#lines
+          canvas#lineChartT.linesCanvas

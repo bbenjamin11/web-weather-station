@@ -7,6 +7,7 @@ var fs = require('fs');
 var myStations = [];
 var myNameStation;
 var dateFilter = "day";
+var dataFilter = "temp";
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -29,6 +30,7 @@ app.get('/', function(req, res) {
         var d = {};
         d.name = element.name;
         d.position = element.position;
+        d.type = element.type;
         stations.push(d);
     });
 
@@ -49,27 +51,26 @@ app.ws('/', function(ws, req) {
 
         if (msg.type == "setDateFilrer") {
           dateFilter = msg.data;
-          var [configT,configH,configP,configS] = createLineChart(myNameStation);
+          var configT = createLineChart(myNameStation);
           ws.send(JSON.stringify({
-              type: "setDateFilter",
-              lineChartT: configT,
-              lineChartH: configH,
-              lineChartP: configP,
-              lineChartS: configS
+              type: "infoLineChart",
+              lineChartT: configT
           }));
         }else if (msg.type == "getStationInfo") {
           myNameStation = msg.station;
           var live = getLiveData(myStations, myNameStation);
-          var [configT,configH,configP,configS] = createLineChart(myNameStation);
           /* send info at client page */
           ws.send(JSON.stringify({
               type: "infoStation",
-              data: live,
-              lineChartT: configT,
-              lineChartH: configH,
-              lineChartP: configP,
-              lineChartS: configS
+              data: live
           }));
+        }else if (msg.type == "setDataLineChart") {
+            dataFilter = msg.data;
+            var configT = createLineChart(myNameStation);
+            ws.send(JSON.stringify({
+                type: "infoLineChart",
+                lineChartT: configT
+            }));
         }
     });
     //console.log('socket', req.testing);
@@ -84,19 +85,10 @@ app.listen(3000);
 function getListData(stations, id, sort) {
     var list = [];
     var date = [];
-    var tempMin = [];
-    var hydrMin = [];
-    var presMin = [];
-    var snowMin = [];
-    var tempMax = [];
-    var hydrMax = [];
-    var presMax = [];
-    var snowMax = [];
+    var Min = [];
+    var Max = [];
 
-    var listDataT = [];
-    var listDataH = [];
-    var listDataP = [];
-    var listDataS = [];
+    var listData = [];
 
     /***  Date  ***/
     var mydate = new Date();
@@ -116,10 +108,8 @@ function getListData(stations, id, sort) {
         } else {
           date.push(myYear+'-'+smyMonth+'-'+i+"T00:00:00");
         }
-        listDataT.push([]);
-        listDataH.push([]);
-        listDataP.push([]);
-        listDataS.push([]);
+        listData.push([]);
+
       }
     }if(sort == "year"){
       for(i=1;i<=12;i++){
@@ -128,10 +118,7 @@ function getListData(stations, id, sort) {
         } else {
           date.push(myYear+'-'+i+"-01T00:00:00")
         }
-        listDataT.push([]);
-        listDataH.push([]);
-        listDataP.push([]);
-        listDataS.push([]);
+        listData.push([]);;
       }
     }
 
@@ -144,76 +131,54 @@ function getListData(stations, id, sort) {
                 if(sort == "day" && d == myDay && m == myMonth && y == myYear){
                   //listDataT.push(myData);
                   date.push(myData.date)
-                  tempMin.push(myData.temperature);
-                  hydrMin.push(myData.hygrometry);
-                  presMin.push(myData.pressure);
-                  snowMin.push(myData.snow);
+                  if(dataFilter == "temp"){
+                    Min.push(myData.temperature);
+                  }else if(dataFilter == "hygr"){
+                    Min.push(myData.hygrometry);
+                  }else if(dataFilter == "pres"){
+                    Min.push(myData.pressure);
+                  }else if(dataFilter == "snow"){
+                    Min.push(myData.snow);
+                  }
 
                 }if(sort == "month" && m == myMonth && y == myYear){
                   _d = parseInt(d)-1;
-                  listDataT[_d].push(myData.temperature);
-                  listDataH[_d].push(myData.hygrometry);
-                  listDataP[_d].push(myData.pressure);
-                  listDataS[_d].push(myData.snow);
-
+                  if(dataFilter == "temp"){
+                    listData[_d].push(myData.temperature);
+                  }else if(dataFilter == "hygr"){
+                    listData[_d].push(myData.hygrometry);
+                  }else if(dataFilter == "pres"){
+                    listData[_d].push(myData.pressure);
+                  }else if(dataFilter == "snow"){
+                    listData[_d].push(myData.snow);
+                  }
                 }if(sort == "year" && y == myYear){
                   _m = parseInt(m)-1;
-                  listDataT[_m].push(myData.temperature);
-                  listDataH[_m].push(myData.hygrometry);
-                  listDataP[_m].push(myData.pressure);
-                  listDataS[_m].push(myData.snow)
+                  if(dataFilter == "temp"){
+                    listData[_m].push(myData.temperature);
+                  }else if(dataFilter == "hygr"){
+                    listData[_m].push(myData.hygrometry);
+                  }else if(dataFilter == "pres"){
+                    listData[_m].push(myData.pressure);
+                  }else if(dataFilter == "snow"){
+                    listData[_m].push(myData.snow);
+                  }
                 }
             }
-            for(var k=0;k<listDataT.length;k++){
+            for(var k=0;k<listData.length;k++){
               /*** min T ****/
-              v = Math.min(...listDataT[k]);
+              v = Math.min(...listData[k]);
               if(v == (Infinity))
                 v = null;
-              tempMin.push(v);
+              Min.push(v);
 
               /*** max T ****/
-              v = Math.max(...listDataT[k]);
+              v = Math.max(...listData[k]);
               if(v == (-Infinity))
                 v = null;
-              tempMax.push(v);
-
-              /*** min H ****/
-              v = Math.min(...listDataH[k]);
-              if(v ==  (Infinity))
-                v = null;
-              hydrMin.push(v);
-
-              /*** max H ****/
-              v = Math.max(...listDataH[k]);
-              if(v == (-Infinity))
-                v = null;
-              hydrMax.push(v);
-
-              /*** min P ****/
-              v = Math.min(...listDataP[k]);
-              if(v == (Infinity))
-                v = null;
-              presMin.push(v);
-
-              /*** max P ****/
-              v = Math.max(...listDataP[k]);
-              if(v == (-Infinity))
-                v = null;
-              presMax.push(v);
-
-              /*** min S ****/
-              v = Math.min(...listDataS[k]);
-              if(v == (Infinity))
-                v = null;
-              snowMin.push(v);
-
-              /*** max S ****/
-              v = Math.max(...listDataS[k]);
-              if(v == (-Infinity))
-                v = null;
-              snowMax.push(v);
+              Max.push(v);
             }
-            list.push(date, tempMin, tempMax, hydrMin,hydrMax, presMin, presMax, snowMin, snowMax);
+            list.push(date, Min, Max);
             return list;
         }
     }
@@ -236,9 +201,11 @@ function getLiveData(stations, id) {
     var hydr;
     var pres;
     var snow;
+    var type;
     for (var i in stations) {
         s = stations[i];
         if (s.name == id) {
+          type = s.type;
           var d = s.data[0];
           date = d.date;
           temp = d.temperature;
@@ -247,6 +214,7 @@ function getLiveData(stations, id) {
           snow = d.snow;
 
           return {
+            "type":type,
             "date":date,
             "temperature":temp,
             "hygrometry":hydr,
@@ -259,27 +227,42 @@ function getLiveData(stations, id) {
 }
 
 function createLineChart(name){
-  list = getListData(myStations, name,dateFilter);
-
+  list = getListData(myStations, name,dateFilter,dataFilter);
   var optLine1 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-  optLine1.scales.yAxes[0].scaleLabel.labelString = "°C";
-  optLine1.title.text = "Temperature";
-  var configT = {
+  if(dataFilter == "temp"){
+    optLine1.scales.yAxes[0].scaleLabel.labelString = "°C";
+    optLine1.title.text = "Temperature";
+  }else if(dataFilter == "hygr"){
+    optLine1.scales.yAxes[0].scaleLabel.labelString = "%";
+    optLine1.title.text = "Hygrometry";
+  }else if(dataFilter == "pres"){
+    optLine1.scales.yAxes[0].scaleLabel.labelString = "Pa";
+    optLine1.title.text = "Pessure";
+  }else if(dataFilter == "snow"){
+    optLine1.scales.yAxes[0].scaleLabel.labelString = "M";
+    optLine1.title.text = "Snow";
+  }
+
+  var config = {
       type: 'line',
       data: {
           labels: list[0],
           datasets: [{
               label: "min",
-              backgroundColor: 'rgb(255, 0, 0)',
-              borderColor: 'rgb(255, 0, 0)',
+              /*
+              backgroundColor: 'rgb(203, 155, 155)',
+              borderColor: 'rgb(203, 155, 155)',
+              */
+              backgroundColor: 'rgb(107, 28, 35)',
+              borderColor: 'rgb(107, 28, 35)',
               data: list[1],
               fill: false,
               yAxisID: "y-axis-0",
           },
           {
               label: "max",
-              backgroundColor: 'rgb(255, 0, 0)',
-              borderColor: 'rgb(255, 0, 0)',
+              backgroundColor: 'rgb(183, 67, 67)',
+              borderColor: 'rgb(183, 67, 67)',
               data: list[2],
               fill: false,
               yAxisID: "y-axis-0",
@@ -289,86 +272,10 @@ function createLineChart(name){
       options: optLine1
 
   };
-  var optLine2 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-  optLine2.scales.yAxes[0].scaleLabel.labelString = "%";
-  optLine2.title.text = "Hygrometry";
-  var configH = {
-      type: 'line',
-      data: {
-          labels: list[0],
-          datasets: [{
-              label: "min",
-              backgroundColor: 'rgb(0, 0, 255)',
-              borderColor: 'rgb(0, 0, 255)',
-              data: list[3],
-              fill: false,
-              yAxisID: "y-axis-0",
-          },{
-              label: "max",
-              backgroundColor: 'rgb(0, 0, 255)',
-              borderColor: 'rgb(0, 0, 255)',
-              data: list[4],
-              fill: false,
-              yAxisID: "y-axis-0",
-          }
-        ]
-      },
-      options: optLine2
+  if(dateFilter == "day"){
+    config.data.datasets.splice(-1);
+    config.data.datasets[0].label = "value";
+  }
 
-  };
-  var optLine3 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-  optLine3.scales.yAxes[0].scaleLabel.labelString = "Pa";
-  optLine3.title.text = "Pressure";
-  var configP = {
-      type: 'line',
-      data: {
-          labels: list[0],
-          datasets: [{
-              label: "min",
-              backgroundColor: 'rgb(128, 0, 255)',
-              borderColor: 'rgb(128, 0, 255)',
-              data: list[5],
-              fill: false,
-              yAxisID: "y-axis-0",
-          },{
-              label: "max",
-              backgroundColor: 'rgb(128, 0, 255)',
-              borderColor: 'rgb(128, 0, 255)',
-              data: list[6],
-              fill: false,
-              yAxisID: "y-axis-0",
-          }]
-      },
-      options: optLine3
-
-  };
-  var optLine4 = JSON.parse(fs.readFileSync(__dirname + "/optionLineChart.json", "utf8"));
-  optLine4.scales.yAxes[0].scaleLabel.labelString = "M";
-  optLine4.title.text = "Snow";
-  var configS = {
-      type: 'line',
-      data: {
-          labels: list[0],
-          datasets: [{
-              label: "min",
-              backgroundColor: 'rgb(0, 255, 0)',
-              borderColor: 'rgb(0, 255, 0)',
-              data: list[7],
-              fill: false,
-              yAxisID: "y-axis-0",
-          },{
-              label: "max",
-              backgroundColor: 'rgb(0, 255, 0)',
-              borderColor: 'rgb(0, 255, 0)',
-              data: list[8],
-              fill: false,
-              yAxisID: "y-axis-0",
-          }
-        ]
-      },
-      options: optLine4
-
-  };
-
-  return [configT,configH,configP,configS];
+  return config;
 }

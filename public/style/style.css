@@ -8,15 +8,54 @@ body, html {
   margin : 0 auto
 }
 
+#head{
+  width: 100%;
+  height: 60px;
+  background-color: black;
+
+}
+#logo{
+  margin-left: 10px;
+  height: 90%;
+}
+table#icon{
+  width: 100%;
+}
+#divLivePres{
+  top : 255px;
+}
+#divLiveSnow{
+  top : 255px;
+}
+
+div.divLive{
+  position: absolute;
+  width: 49%;
+}
+.classicon{
+  width: 99%;
+}
+p.textLive{
+  color: white;
+  position: absolute;
+  top:125px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Lato";
+  font-size: 28px;
+  font-style: normal;
+  font-weight: bold;
+}
+
 /*
 * Map
 */
 
 #map {
   position: absolute;
-  top: 0;
+  top: 60px;
   left: 0;
-  height: 100%;
+  height: calc(100% - 60px);
   width: 100%;
 }
 
@@ -25,11 +64,10 @@ body, html {
 */
 
 .panel {
-  height: 100%;
+  height: 95%;
   width: 408px;
   left: -408px;
   position: absolute;
-  top: 0;
 
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
@@ -47,20 +85,23 @@ body, html {
 #divStationName{
   margin: 0;
   height : 50px;
-  color: white;
-  background: rgb(0, 0, 255);
+  color: Black;
+  background: rgb(255, 255, 255);
 
   position: relative;
 }
 #stationName{
-  margin:  0 10px auto;
+  margin:  0 50px auto;
   font-family: "Lato";
-  font-size: 20px;
+  font-size: 24px;
   font-style: normal;
   font-weight: bold;
   position: absolute;
   top: 50%; /* poussé de la moitié de hauteur du référent */
-  transform: translateY(-50%); /* tiré de la moitié de sa propre hauteur */
+  transform: translateY(-75%); /* tiré de la moitié de sa propre hauteur */
+}
+#staionImg{
+    margin:  0 10px auto;
 }
 
 /*
@@ -96,7 +137,7 @@ body, html {
 #chartPanel {
   z-index: 0;
   height: 100%;
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
   width: 250%;
   right: 0;
   top: 0;
@@ -153,12 +194,9 @@ td.mymenu:hover{
 }
 
 
-table#lines{
+div#lines{
 	width: 100%;
 }
-td{
-  width: 45%
-}
 canvas.linesCanvas {
-		background: rgba(255,255,255,1);
+		background: rgba(255,255,255,0);
 }
