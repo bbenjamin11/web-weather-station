@@ -71,6 +71,12 @@ app.ws('/', function(ws, req) {
                 type: "infoLineChart",
                 lineChartT: configT
             }));
+        }else if (msg.type == "refreshLineChart") {
+            var configT = createLineChart(myNameStation);
+            ws.send(JSON.stringify({
+                type: "infoLineChart",
+                lineChartT: configT
+            }));
         }
     });
     //console.log('socket', req.testing);

@@ -11,26 +11,23 @@ function onLoad(data){
     if($panel.offset().left == 0){
       $chartButton.hide();
       $chartPanel.css({
-        right: 0,
+        right: 20,
       });
       $panel.css({
         left: -$panelWidth,
       });
+
+      $("#imgtemp").attr("src","/image/temperature_passif.png");
+      $("#imghygr").attr("src","/image/hydraulic_passif.png");
+      $("#imgpres").attr("src","/image/pression_passif.png");
+      $("#imgsnow").attr("src","/image/Snow_level_passif.png");
     }
   });
 
   $( "#chartButton" ).click(function() {
-
-    if($chartPanel.offset().left != $panelWidth){
-      $chartPanel.css({
-        right: -$chartPanel.width(),
-      });
-    }else{
-      $chartPanel.css({
-        right: 0,
-      });
-    }
-
+    $chartPanel.css({
+      right: 20
+    });
   });
   /***  Clik filter selection   ***/
   $("#year").click(function(){
@@ -46,12 +43,17 @@ function onLoad(data){
 
   /***  Clik data line chart   ***/
   $("#imgtemp").click(function(){
-    $("#imgtemp").attr("src","/image/temperature_actif.png");
     $("#imghygr").attr("src","/image/hydraulic_passif.png");
     $("#imgpres").attr("src","/image/pression_passif.png");
     $("#imgsnow").attr("src","/image/Snow_level_passif.png");
-
+    $("#imgtemp").attr("src","/image/temperature_actif.png");
     sendDataLineChart("temp");
+
+    if($chartPanel.offset().left != $panelWidth){
+      $chartPanel.css({
+        right: -$chartPanel.width(),
+      });
+    }
   });
   $("#imghygr").click(function(){
     $("#imgtemp").attr("src","/image/temperature_passif.png");
@@ -60,6 +62,11 @@ function onLoad(data){
     $("#imgsnow").attr("src","/image/Snow_level_passif.png");
 
     sendDataLineChart("hygr");
+    if($chartPanel.offset().left != $panelWidth){
+      $chartPanel.css({
+        right: -$chartPanel.width(),
+      });
+    }
   });
   $("#imgpres").click(function(){
     $("#imgtemp").attr("src","/image/temperature_passif.png");
@@ -68,6 +75,12 @@ function onLoad(data){
     $("#imgsnow").attr("src","/image/Snow_level_passif.png");
 
     sendDataLineChart("pres");
+
+    if($chartPanel.offset().left != $panelWidth){
+      $chartPanel.css({
+        right: -$chartPanel.width(),
+      });
+    }
   });
   $("#imgsnow").click(function(){
     $("#imgtemp").attr("src","/image/temperature_passif.png");
@@ -76,6 +89,12 @@ function onLoad(data){
     $("#imgsnow").attr("src","/image/Snow_level_actif.png");
 
     sendDataLineChart("snow");
+
+    if($chartPanel.offset().left != $panelWidth){
+      $chartPanel.css({
+        right: -$chartPanel.width(),
+      });
+    }
   });
 
   loadStations(data.stations);
@@ -154,6 +173,9 @@ function onMessage(evt){
     } else {
       $("#staionImg").attr("src","/image/refuge_station_icone.png");
     }
+    //if($chartPanel.offset().left == $panelWidth){
+      ws.send(JSON.stringify({type: "refreshLineChart"}));
+    //}
   }else if(msg.type == "infoLineChart"){
     /*- - - - - Chart - - - - -*/
     try {

@@ -139,7 +139,7 @@ p.textLive{
   height: 100%;
   background: rgba(255, 255, 255, 0.85);
   width: 250%;
-  right: 0;
+  right: 20px;
   top: 0;
   position: absolute;
   -webkit-transition: all 0.5s ease;
@@ -147,7 +147,6 @@ p.textLive{
   opacity: 1;
   box-shadow: 10px 5px 8px 0 rgba(0, 0, 0, 0.5);
 }
-
 /*
 * chartButton
 */
@@ -156,7 +155,7 @@ p.textLive{
   height: 50px;
   background: white;
   left: 100%;
-  top: 20%;
+  top: 5%;
   opacity: 1;
   position: absolute;
   box-shadow: 10px 5px 8px 0 rgba(0, 0, 0, 0.5);
