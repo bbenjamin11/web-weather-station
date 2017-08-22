@@ -7,7 +7,29 @@ body, html {
   width: 100%;
   margin : 0 auto
 }
+#splitPage{
+  height: 100%;
+  width: 100%
+}
+#splitPage{
+  z-index: 3;
+  position: absolute;
+  -webkit-transition: all 1s ease;
+  transition: all 1s ease;
 
+  cursor: pointer;
+  /* The image used */
+  background-image: url("/image/Split_Page2.jpg");
+  /* Full height */
+  height: 100%;
+  width: 100%;
+  top : 0;
+  left: 0;
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 #head{
   width: 100%;
   height: 60px;
@@ -22,10 +44,10 @@ table#icon{
   width: 100%;
 }
 #divLivePres{
-  top : 255px;
+  top : 265px;
 }
 #divLiveSnow{
-  top : 255px;
+  top : 265px;
 }
 
 div.divLive{
@@ -34,6 +56,7 @@ div.divLive{
 }
 .classicon{
   width: 99%;
+  cursor: pointer;
 }
 p.textLive{
   color: white;
@@ -83,7 +106,7 @@ p.textLive{
   height: 100%
 }
 #divStationName{
-  margin: 0;
+  margin: 10px 0 0 0;
   height : 50px;
   color: Black;
   background: rgb(255, 255, 255);
@@ -127,7 +150,7 @@ p.textLive{
   background:url(./icon/close.png) no-repeat;
   background-size: contain;
   width: 100%;
-  height: 100%
+  height: 100%;
 }
 
 /*
@@ -143,7 +166,7 @@ p.textLive{
   top: 0;
   position: absolute;
   -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease;
+  transition: .5s ease;
   opacity: 1;
   box-shadow: 10px 5px 8px 0 rgba(0, 0, 0, 0.5);
 }
@@ -162,40 +185,65 @@ p.textLive{
   border-radius: 0 5px 5px 0;
 }
 
+img#iconChartButton{
+  width: 60%;
+  position: absolute;
+  top:50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
 /*
 * Line chart
 */
-
-
-
-table#menu {
-    /*border-collapse: collapse;*/
-
-
-    width: 50%;
-    margin: auto;
-    margin-bottom: 50px;
-    margin-top: 50px;
-  	text-align: center;
-  	table-layout: auto;
+ul {
+    list-style-type: none;
+    margin: 0 50px auto;
+    padding: 0;
+    overflow: hidden;
+    float : left;
 }
 
-td.mymenu {
-  width: 33%;
+li {
+    float: left;
+}
+
+li a {
+  cursor: pointer;
+  box-sizing:content-box;
+  margin: 10px;
+  display: block;
   text-align: center;
-  border: 2px solid blue;
-  border-radius: 10px;
-  /*border-bottom: 1px solid #ddd;*/
+  padding: 14px 16px;
+  text-decoration: none;
+  color:#222222;
+  font-family: "Lato";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: bold;
+  transition: .5s ease;
+  border-radius: 5px;
 }
 
-td.mymenu:hover{
-  background-color:rgba(0, 0, 200, 0.2)
+li a:hover{
+    transition: .5s ease;
+    background-color: #eee;
 }
 
+span {
+  margin-top: 2px;
+  background-color: #222222;
+  display: block;
+  height: 3px;
+  left: 0;
+  position: absolute;
+  transition: left 300ms, width 300ms;
+}
 
 div#lines{
-	width: 100%;
+  margin-left: 10px;
+	width: calc(100% - 10);
 }
 canvas.linesCanvas {
-		background: rgba(255,255,255,0);
+  background: rgba(255,255,255,0);
 }

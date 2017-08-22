@@ -34,12 +34,14 @@ app.get('/', function(req, res) {
         stations.push(d);
     });
 
+    //res.render('split');
 
     res.render('index', {
         data: {
             stations: stations
         }
     });
+    
 });
 
 
@@ -255,10 +257,6 @@ function createLineChart(name){
           labels: list[0],
           datasets: [{
               label: "min",
-              /*
-              backgroundColor: 'rgb(203, 155, 155)',
-              borderColor: 'rgb(203, 155, 155)',
-              */
               backgroundColor: 'rgb(107, 28, 35)',
               borderColor: 'rgb(107, 28, 35)',
               data: list[1],

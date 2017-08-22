@@ -9,6 +9,7 @@ html(lang='fr-FR')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js')
     link(rel='stylesheet', href='style/style.css')
   body(data-affix='85', data-top='0', onload='onLoad(#{JSON.stringify(data)})')
+    div#splitPage
     div#head
       img#logo(src="/image/Logo_header.png" alt="Image Title")
     div#map
@@ -40,11 +41,16 @@ html(lang='fr-FR')
                 p#snowLive.textLive 0m
       div#chartPanel
         div#chartButton.button
+          img#iconChartButton(src="/image/arrow.png")
         div#selectDate
-        table#menu
-          tr
-            td#year.mymenu This Year
-            td#month.mymenu This Month
-            td#day.mymenu This Day
+          ul#id.menu
+            li#liYear
+              a#year YEAR
+            li#liMonth
+              a#month MONTH
+            li#liDay.current
+              a#day TODAY
+            span
+
         div#lines
           canvas#lineChartT.linesCanvas

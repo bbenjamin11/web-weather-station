@@ -1,5 +1,11 @@
 function onLoad(data){
   console.log("onload");
+
+  $("#splitPage").click(function() {
+    var $splitPageHight = $("#splitPage").height();
+    $("#splitPage").css({top : -$splitPageHight});
+  });
+
   var $panel = $(".panel");
   var $chartPanel = $("#chartPanel");
   var $chartButton = $("#chartButton");
@@ -25,19 +31,33 @@ function onLoad(data){
   });
 
   $( "#chartButton" ).click(function() {
+
     $chartPanel.css({
       right: 20
     });
+    $("#imgtemp").attr("src","/image/temperature_passif.png");
+    $("#imghygr").attr("src","/image/hydraulic_passif.png");
+    $("#imgpres").attr("src","/image/pression_passif.png");
+    $("#imgsnow").attr("src","/image/Snow_level_passif.png");
   });
   /***  Clik filter selection   ***/
   $("#year").click(function(){
     sendDataFilter("year");
+    $('#liYear').addClass('current');
+    $('#liMonth').removeClass('current');
+    $('#liDay').removeClass('current');
   });
   $("#month").click(function(){
     sendDataFilter("month");
+    $('#liMonth').addClass('current');
+    $('#liDay').removeClass('current');
+    $('#liYear').removeClass('current');
   });
   $("#day").click(function(){
     sendDataFilter("day");
+    $('#liDay').addClass('current');
+    $('#liMonth').removeClass('current');
+    $('#liYear').removeClass('current');
   });
 
 
@@ -99,6 +119,9 @@ function onLoad(data){
 
   loadStations(data.stations);
 
+  /*- - - - - Slider - - - - - - -*/
+  initSlider();
+
   /*- - - - - WebSocket - - - - -*/
   ws = new WebSocket('ws://localhost:3000/');
   ws.onopen = function(evt) { onOpen(evt); };
@@ -130,9 +153,15 @@ function loadStations(stations){
   }
 
   stations.forEach(function(station, index) {
+    var imgIcon = "/image/refuge_station_icone.png";
+    if(station.type == "station"){
+      imgIcon = "/image/station_icone.png";
+    }
     var marker = new google.maps.Marker({
       position: station.position,
-      map: map
+      map: map,
+      animation: google.maps.Animation.DROP,
+      icon: imgIcon
     });
 
     marker.addListener('click',function(){
@@ -163,7 +192,6 @@ function onMessage(evt){
 
   var msg = JSON.parse(evt.data);
   if(msg.type == "infoStation"){
-    console.log("-*-*-*-*-*-*-");
     $("#tempLive").html(msg.data.temperature + "°C");
     $("#hygrLive").html(msg.data.hygrometry + "%");
     $("#presLive").html(msg.data.pressure + "Pa");
@@ -173,18 +201,59 @@ function onMessage(evt){
     } else {
       $("#staionImg").attr("src","/image/refuge_station_icone.png");
     }
-    //if($chartPanel.offset().left == $panelWidth){
-      ws.send(JSON.stringify({type: "refreshLineChart"}));
-    //}
+
+    ws.send(JSON.stringify({type: "refreshLineChart"}));
   }else if(msg.type == "infoLineChart"){
     /*- - - - - Chart - - - - -*/
     try {
       window.myLine.destroy();
     } catch (e) {}
     console.log(JSON.stringify(msg.lineChartT));
-    console.log("----------------------********---------------------");
     var ctx1 = document.getElementById("lineChartT").getContext("2d");
     window.myLine = new Chart(ctx1, msg.lineChartT);
   }
+
+}
+
+
+function initSlider(){
+
+  var $menu = $(".menu");
+  var $underline = $menu.find("span");
+
+  function slider() {
+    var $current = $menu.find(".current a");
+
+    var $currentWidth = $current.width();
+    var $innerWidth = $current.innerWidth();
+    var $outerWidth = $current.outerWidth(true);
+    var $currentOffset = $current.position().left;
+
+    var $currentHeight = $current.height();
+    var $currentTop = $current.position().top;
+    var $innerHeight = $current.innerHeight();
+    var $outerHeight = $current.outerHeight(true);
+
+    $underline.css({
+      left: $currentOffset + ($outerWidth - $currentWidth)/2,
+      width: $currentWidth,
+      top : $currentHeight + $currentTop + ($outerHeight - $currentHeight)/2
+    });
+  };
+
+  slider();
+
+  $menu.find('a').hover(
+    function () {
+      $underline.css({
+        left: $(this).position().left + ($(this).outerWidth(true) - $(this).width())/2,
+        width: $(this).width(),
+        top: $(this).height() + $(this).position().top + ($(this).outerHeight(true) - $(this).height())/2
+      });
+    },
+    function () {
+      slider();
+    }
+  );
 
 }

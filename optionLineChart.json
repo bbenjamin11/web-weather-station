@@ -2,7 +2,10 @@
    "responsive":true,
    "title":{
       "display":true,
-      "text":"Line Chart"
+      "text":"Line Chart",
+      "fontColor":"#222",
+      "fontSize": 20,
+      "fontFamily": "Arial"
    },
    "tooltips":{
       "mode":"index",
