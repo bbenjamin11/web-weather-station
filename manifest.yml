@@ -1,0 +1,10 @@
+applications:
+- path: .
+  memory: 256M
+  instances: 1
+  domain: mybluemix.net
+  name: web-weather-station
+  host: web-weather-station
+  disk_quota: 1024M
+  services:
+  - NoSQLDB-weather-station

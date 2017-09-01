@@ -123,7 +123,10 @@ function onLoad(data){
   initSlider();
 
   /*- - - - - WebSocket - - - - -*/
-  ws = new WebSocket('ws://localhost:3000/');
+ 
+  //ws = new WebSocket('ws://localhost:3000/');
+  console.log("ext_uri : " + data.ext_uri);
+  ws = new WebSocket("wss://" + data.ext_uri);
   ws.onopen = function(evt) { onOpen(evt); };
   ws.onmessage = function(evt) { onMessage(evt); };
 }

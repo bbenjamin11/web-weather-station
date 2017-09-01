@@ -1,17 +1,21 @@
 {
-  "name": "charttest",
-  "version": "1.0.0",
-  "description": "Test of the chart",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Guillaume Couly",
-  "license": "ISC",
-  "dependencies": {
-    "chart.js": "^2.6.0",
-    "express": "^4.15.3",
-    "express-ws": "^3.0.0",
-    "jade": "^1.11.0"
-  }
+	"name": "NodejsStarterApp",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node app.js"
+	},
+	"dependencies": {
+		"express": "4.15.x",
+		"cfenv": "1.0.x",
+		"body-parser": "^1.0.2",
+		"nano": "^6.1.5",
+	    "async":"*",
+	    "express-ws": "^3.0.0",
+	    "jade": "^1.11.0"
+	},
+	"repository": {},
+	"engines": {
+		"node": "6.x"
+	} 
 }
